@@ -2,11 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:ubitevents/Views/homeScreen.dart';
-import 'package:ubitevents/Views/records.dart';
-import 'package:ubitevents/Views/search.dart';
 import 'package:ubitevents/auth/loginScreen.dart';
-
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -30,7 +26,7 @@ class MyApp extends StatelessWidget {
     User? user = FirebaseAuth.instance.currentUser;
 
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'UBIT Events',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           appBarTheme: AppBarTheme(

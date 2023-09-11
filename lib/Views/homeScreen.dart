@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ubitevents/Utils/utils.dart';
-import 'package:ubitevents/Views/records.dart';
-import 'package:ubitevents/Views/signin.dart';
 import 'package:ubitevents/auth/loginScreen.dart';
 import 'package:ubitevents/widgets/round_button.dart';
 

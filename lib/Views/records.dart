@@ -1,9 +1,10 @@
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ubitevents/Utils/utils.dart';
 import 'package:ubitevents/Views/homeScreen.dart';
+import 'package:ubitevents/auth/loginScreen.dart';
 
 class Records extends StatefulWidget {
   const Records({
@@ -16,7 +17,13 @@ class Records extends StatefulWidget {
   State<Records> createState() => _RecordsState();
 }
 
+
+
 class _RecordsState extends State<Records> {
+
+
+  static FirebaseAuth _auth = FirebaseAuth.instance;
+
   final _formKey = GlobalKey<FormState>();
 
   // Firestore instance  -- to get
@@ -31,6 +38,10 @@ class _RecordsState extends State<Records> {
   String contactController = "";
   String signatureController = "";
 
+  Future<void> _signOut() async {
+  await _auth.signOut();
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +50,18 @@ class _RecordsState extends State<Records> {
           'Records',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
         ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.04),
+            child: InkWell
+            (
+              onTap: (){
+                _signOut;
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => loginScreen()));
+                } ,
+              child: Icon(Icons.logout)),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -63,27 +86,17 @@ class _RecordsState extends State<Records> {
                           itemBuilder: (context, index) {
                             return Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width * .04,
-                                    vertical:
-                                        MediaQuery.of(context).size.height *
-                                            .002),
+                                    horizontal: MediaQuery.of(context).size.width * .04,
+                                    vertical: MediaQuery.of(context).size.height * 002),
                                 child: Card(
                                   child: ListTile(
-                                    title: Text(
-                                        snapshot.data!.docs[index]['name']),
-                                    subtitle: Text(snapshot.data!.docs[index]
-                                        ['serial_no']),
-                                    //   //Update
+                                    title: Text(snapshot.data!.docs[index]['name']),
+                                    subtitle: Text(snapshot.data!.docs[index]['serial_no']),
+                                       //Update
                                     trailing: Visibility(
-                                      child: IconButton(
-                                          icon: const Icon(
-                                            Icons.more_vert,
-                                            color: Color.fromARGB(
-                                                255, 255, 197, 36),
-                                          ),
-                                          onPressed: () {
-                                            showModalBottomSheet(
+                                      child: IconButton(icon: const Icon(Icons.more_vert,
+                                      color: Color.fromARGB(255, 255, 197, 36),),
+                                          onPressed: () {showModalBottomSheet(
                                                 isScrollControlled: true,
                                                 context: context,
                                                 // ignore: prefer_const_constructors
@@ -95,43 +108,24 @@ class _RecordsState extends State<Records> {
                                                           top: 20,
                                                           left: 20,
                                                           right: 20,
-                                                          bottom: MediaQuery.of(
-                                                                      ctx)
-                                                                  .viewInsets
-                                                                  .bottom +
-                                                              20),
+                                                          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
                                                       child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
+                                                          mainAxisSize:MainAxisSize.min,
+                                                          crossAxisAlignment:CrossAxisAlignment.start,
+                                                            children: [
+
                                                             //Serial No.
                                                             TextFormField(
-                                                              initialValue: snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                      index]
-                                                                  ['serial_no'],
-                                                              onChanged:
-                                                                  (value) {
-                                                                serailNoController =
-                                                                    value
-                                                                        .toString();
+                                                              initialValue: snapshot.data!.docs[index]['serial_no'],
+                                                              onChanged: (value) {
+                                                                serailNoController = value.toString();
                                                               },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                labelText:
-                                                                    'Serial No.',
+                                                              keyboardType:TextInputType.number,
+                                                              decoration:const InputDecoration(
+                                                                labelText:'Serial No.',
                                                               ),
                                                               validator:
-                                                                  (value) {
-                                                                if (value!
-                                                                    .isEmpty) {
+                                                                  (value) {if (value!.isEmpty) {
                                                                   return ('Enter Serial No');
                                                                 }
                                                               },
@@ -139,170 +133,98 @@ class _RecordsState extends State<Records> {
 
                                                             //Name
                                                             TextFormField(
-                                                              initialValue: snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                      index]
-                                                                  ['name'],
-                                                              onChanged:
-                                                                  (value) {
-                                                                nameController =
-                                                                    value
-                                                                        .toString();
+                                                              initialValue: snapshot.data!.docs[index]['name'],
+                                                              onChanged:(value) {
+                                                                nameController =value.toString();
                                                               },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                      labelText:
-                                                                          'Name'),
-                                                              validator:
-                                                                  (value) {
-                                                                if (value!
-                                                                    .isEmpty) {
+                                                              keyboardType:TextInputType.text,
+                                                              decoration:const InputDecoration(
+                                                                  labelText: 'Name'),
+                                                              validator: (value) {
+                                                                if (value!.isEmpty) {
                                                                   return ('Enter Name');
                                                                 }
                                                               },
                                                             ),
+
                                                             //Contact No
 
                                                             TextFormField(
-                                                              initialValue: snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                      index][
-                                                                  'contact_no'],
-                                                              onChanged:
-                                                                  (value) {
-                                                                contactController =
-                                                                    value
-                                                                        .toString();
+                                                              initialValue: snapshot.data!.docs[index]['contact_no'],
+                                                              onChanged:(value) {
+                                                                contactController =value.toString();
                                                               },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                labelText:
-                                                                    'Contact No.',
+                                                              keyboardType:TextInputType.number,
+                                                              decoration:const InputDecoration(
+                                                                labelText:'Contact No.',
                                                               ),
-                                                              validator:
-                                                                  (value) {
-                                                                if (value!
-                                                                    .isEmpty) {
+                                                              validator:(value) {
+                                                                if (value!.isEmpty) {
                                                                   return ('Enter Contact No.');
                                                                 }
                                                               },
                                                             ),
+
                                                             //Signature No
                                                             TextFormField(
-                                                              initialValue: snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                      index]
-                                                                  ['signature'],
-                                                              onChanged:
-                                                                  (value) {
-                                                                serailNoController =
-                                                                    value
-                                                                        .toString();
+                                                              initialValue: snapshot.data!.docs[index]['signature'],
+                                                              onChanged:(value) {
+                                                                signatureController = value.toString();
                                                               },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                labelText:
-                                                                    'Signature.',
+                                                              keyboardType: TextInputType.text,
+                                                              decoration:const InputDecoration(
+                                                                labelText: 'Signature.',
                                                               ),
-                                                              validator:
-                                                                  (value) {
-                                                                if (value!
-                                                                    .isEmpty) {
+                                                              validator: (value) {
+                                                                if (value!.isEmpty) {
                                                                   return ('Enter signature');
                                                                 }
                                                               },
                                                             ),
+
                                                             const SizedBox(
                                                               height: 20,
                                                             ),
+
                                                             Visibility(
-                                                              visible:
-                                                                  widget.role ==
-                                                                      "admin",
+                                                              visible:widget.role =="admin",
                                                               child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceEvenly,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
+                                                                mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+                                                                crossAxisAlignment:CrossAxisAlignment.center,
                                                                 children: [
-                                                                  IconButton(
-                                                                      onPressed:
-                                                                          () async {
-                                                                        if (true) {
-                                                                          await ref
+                                                                  IconButton(onPressed:() async {
+                                                                        if (true) {await ref
                                                                               .doc(snapshot.data!.docs[index]['id'])
                                                                               .delete();
-                                                                          String
-                                                                              id =
-                                                                              DateTime.now().millisecondsSinceEpoch.toString();
+                                                                          String id = DateTime.now().millisecondsSinceEpoch.toString();
 
-                                                                          await ref
-                                                                              .doc(id)
-                                                                              .set({
-                                                                            'id':
-                                                                                id,
-                                                                            'name':
-                                                                                nameController,
-                                                                            'serial_no':
-                                                                                serailNoController,
-                                                                            'contact_no':
-                                                                                contactController,
-                                                                            'signature':
-                                                                                signatureController,
+                                                                          await ref.doc(id).set({
+                                                                            'id':id,
+                                                                            'name': nameController,
+                                                                            'serial_no':serailNoController,
+                                                                            'contact_no': contactController,
+                                                                            'signature':signatureController,
                                                                           });
                                                                         }
 
-                                                                        Utils().toastMessage(
-                                                                            'Record Updated');
-                                                                        Navigator.pop(
-                                                                            context);
+                                                                        Utils().toastMessage('Record Updated');
+                                                                        Navigator.pop(context);
                                                                       },
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            40,
-                                                                        color: Colors
-                                                                            .green,
+                                                                      icon:Icon(Icons.edit,size:40,color: Colors.green,
                                                                       )),
                                                                   IconButton(
-                                                                      onPressed:
-                                                                          () {
+                                                                      onPressed:() {
                                                                         // Delete
-
-                                                                        ref
-                                                                            .doc(snapshot.data!.docs[index]['id'])
-                                                                            .delete()
-                                                                            .then((value) {
-                                                                          Utils()
-                                                                              .toastMessage('Record Deleted');
+                                                                          ref.doc(snapshot.data!.docs[index]['id'])
+                                                                          .delete().then((value) {
+                                                                          Utils().toastMessage('Record Deleted');
                                                                         });
-                                                                        Navigator.pop(
-                                                                            context);
+                                                                        Navigator.pop(context);
                                                                       },
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .delete,
-                                                                        size:
-                                                                            40,
-                                                                        color: Colors
-                                                                            .red,
+                                                                      icon:Icon(
+                                                                        Icons.delete,
+                                                                        size:40,
+                                                                        color: Colors.red,
                                                                       ))
                                                                 ],
                                                               ),

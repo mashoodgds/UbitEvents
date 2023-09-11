@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,7 +31,7 @@ class _loginScreenState extends State<loginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Auth
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  static FirebaseAuth _auth = FirebaseAuth.instance;
   String myID = '';
   String myEmail = '';
   String myRole = '';
@@ -204,10 +204,10 @@ class _loginScreenState extends State<loginScreen> {
           MaterialPageRoute(
               builder: (_) => Records(
                     role: snapshot.data()?['role'] ?? "",
-                  )));
-      ;
+          )));
+      
     });
 
-    ;
+    
   }
 }
