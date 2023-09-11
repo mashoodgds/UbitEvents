@@ -2,12 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:ubitevents/Views/search.dart';
 import 'package:ubitevents/auth/loginScreen.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(const Duration(seconds: 4));
+  await Future.delayed(const Duration(seconds: 2));
   FlutterNativeSplash.remove();
 
   await Firebase.initializeApp(
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
               seedColor: const Color.fromARGB(255, 255, 161, 11)),
           useMaterial3: true,
         ),
-        home: loginScreen());
+        home: loginScreen()
+        );
   }
 }

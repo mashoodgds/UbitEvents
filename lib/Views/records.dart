@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ubitevents/Utils/utils.dart';
 import 'package:ubitevents/Views/homeScreen.dart';
+import 'package:ubitevents/Views/search.dart';
 import 'package:ubitevents/auth/loginScreen.dart';
 
 class Records extends StatefulWidget {
@@ -63,10 +64,10 @@ class _RecordsState extends State<Records> {
           )
         ],
       ),
-      body: Column(
+      body: 
+      Column(
         children: [
           // Fetching Records
-
           StreamBuilder<QuerySnapshot>(
               stream: attendees,
               builder: (BuildContext context,
@@ -80,7 +81,9 @@ class _RecordsState extends State<Records> {
                     child: (Text("Error loading list")),
                   );
                 } else {
-                  return Expanded(
+                  return 
+                  
+                  Expanded(
                       child: ListView.builder(
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
@@ -89,7 +92,8 @@ class _RecordsState extends State<Records> {
                                     horizontal: MediaQuery.of(context).size.width * .04,
                                     vertical: MediaQuery.of(context).size.height * 002),
                                 child: Card(
-                                  child: ListTile(
+                                  child: 
+                                  ListTile(
                                     title: Text(snapshot.data!.docs[index]['name']),
                                     subtitle: Text(snapshot.data!.docs[index]['serial_no']),
                                        //Update
@@ -235,26 +239,29 @@ class _RecordsState extends State<Records> {
                                                 });
                                           }),
                                     ),
+                                  
                                   ),
+                                
                                 ));
                           }));
+              
                 }
+
               }),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // IconButton(onPressed: (){
-              //   Navigator.push(
-              //           context,
-              //           MaterialPageRoute(
-              //               builder: (_) => const Search()));
-              // }, icon: Icon(Icons.search)),
-              Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.height * .08,
-                    right: MediaQuery.of(context).size.width * .09),
-                child: FloatingActionButton(
+          Padding(
+            padding:  EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.08 , vertical:MediaQuery.of(context).size.height * 0.09),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                
+                IconButton(onPressed: (){
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const Search()));
+                }, icon: Icon(Icons.search , color: Colors.black,)),
+                FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                         context,
@@ -263,11 +270,12 @@ class _RecordsState extends State<Records> {
                   },
                   child: const Icon(Icons.add),
                 ),
-              ),
-            ],
+              ],
+            ),
           )
         ],
       ),
+    
     );
   }
 }
