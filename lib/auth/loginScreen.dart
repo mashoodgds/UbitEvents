@@ -1,10 +1,11 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ubitevents/Utils/utils.dart';
 import 'package:ubitevents/Views/homeScreen.dart';
-
 
 import '../Views/records.dart';
 import '../widgets/round_button.dart';
@@ -16,19 +17,16 @@ class loginScreen extends StatefulWidget {
   State<loginScreen> createState() => _loginScreenState();
 }
 
-
-
 class _loginScreenState extends State<loginScreen> {
-
   // states manage
   bool _obsecureText = true;
   bool loading = false;
-  
+
   //controllers
-  
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  
+
   // form key
   final _formKey = GlobalKey<FormState>();
 
@@ -38,35 +36,19 @@ class _loginScreenState extends State<loginScreen> {
   String myEmail = '';
   String myRole = '';
 
-        void _getdata() async{
-                  final user = _auth.currentUser!;
-                       FirebaseFirestore.instance.collection('users').doc(user.uid).snapshots().listen((userData) {
-                                    setState(() {
-                                myID = userData.data()?['id'];
-                                myEmail = userData.data()?['email'];
-                           myRole = userData.data()?['role'];
-                              });
-                            });
-                                        }
-
   // user details
 
-
-  final _users = FirebaseFirestore.instance.collection('users').snapshots();
- @override
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: WillPopScope(
-        onWillPop: () async {
-          SystemNavigator.pop();
-          return true;
-        },
-        child: 
-        
-        Scaffold(
-          // appBar: AppBar(),
-          body:    Form(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: WillPopScope(
+            onWillPop: () async {
+              SystemNavigator.pop();
+              return true;
+            },
+            child: Scaffold(
+                body: Form(
               key: _formKey,
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -77,13 +59,14 @@ class _loginScreenState extends State<loginScreen> {
                   children: [
                     Text(
                       'Sign In',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+                      style:
+                          TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
                     ),
-          
+
                     const SizedBox(
                       height: 44,
                     ),
-          
+
                     TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       controller: emailController,
@@ -104,11 +87,11 @@ class _loginScreenState extends State<loginScreen> {
                         }
                       },
                     ),
-          
+
                     const SizedBox(
                       height: 28,
                     ),
-          
+
                     TextFormField(
                       controller: passwordController,
                       decoration: InputDecoration(
@@ -139,46 +122,26 @@ class _loginScreenState extends State<loginScreen> {
                       },
                       obscureText: _obsecureText,
                     ),
-          
+
                     const SizedBox(
                       height: 28,
                     ),
-                  
+
                     // Signin button
-          
+
                     RoundButton(
                         title: 'Sign in',
                         loading: loading,
                         onTap: () {
                           if (_formKey.currentState!.validate()) {
-                              setState(() {
-                                loading = true;
-                              });
-                             _auth.signInWithEmailAndPassword(email: emailController.text.toString(),
-                              password: passwordController.text.toString())
-                              .then((value) {
-                                 _getdata();
-                                debugPrint("Email ${myEmail} , role ${myRole}");
-                                setState(() {
-                                loading = false;
-                              });
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> Records()));
-                          }).onError((error, stackTrace) {
-                            Utils().toastMessage(error.toString());
-                            setState(() {
-                                loading = false;
-                              });
-                          });
-          
-                            FocusScope.of(context).unfocus();
-                     
+                            sigin();
                           }
                         }),
-          
+
                     const SizedBox(
                       height: 28,
                     ),
-          
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -203,10 +166,48 @@ class _loginScreenState extends State<loginScreen> {
                   ],
                 ),
               ),
-            ))));}
-         }
-        
-      
-    
-  
+            ))));
+  }
 
+  sigin() async {
+    try {
+      setState(() {
+        loading = true;
+      });
+      await _auth.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+
+      await _getRoleAnDNavigate();
+
+      setState(() {
+        loading = false;
+      });
+    } catch (e) {
+      Utils().toastMessage("$e");
+      setState(() {
+        loading = false;
+      });
+    }
+
+    FocusScope.of(context).unfocus();
+  }
+
+  Future<void> _getRoleAnDNavigate() async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc("${emailController.text}")
+        .get()
+        .then((snapshot) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (_) => Records(
+                    role: snapshot.data()?['role'] ?? "",
+                  )));
+      ;
+    });
+
+    ;
+  }
+}
